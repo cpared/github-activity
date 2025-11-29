@@ -1,4 +1,4 @@
-package main
+package model
 
 type GitHubEvent struct {
     ID        string      `json:"id"`

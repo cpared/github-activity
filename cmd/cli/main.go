@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	custom "github-activity/infraestructure/http"
+	model "github-activity/internal/domain"
+	usecase "github-activity/internal/usecase/events"
 )
 
 const (
@@ -25,16 +27,16 @@ func main() {
 			return
 		}
 
-		var data []GitHubEvent
+		var data []model.GitHubEvent
 		if err := json.Unmarshal(resp.Body(), &data); err != nil {
 			fmt.Println("cannot unmarshal response body: %v", err)
 			return
 		}
 
+		eventHandler := usecase.NewEventHandler()
+
 		for _, info := range data {
-			if info.Type == "CreateEvent" {
-				fmt.Printf("- %s has created a new repository, url: %s \n", info.Actor.Login, info.Repo.URL)
-			}
+			eventHandler.Handle(info)
 		}
 	}
 	return
